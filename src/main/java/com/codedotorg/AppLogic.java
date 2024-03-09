@@ -38,7 +38,27 @@ public class AppLogic {
      */
     public String getWeekForecast(String city) {
         
-        return "";
+        String urlString = BASE_URL + city + "&cnt=7&appid=" + API_KEY;
+        try {
+            URL url = new URL(urlString);
+            HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+            conn.setRequestMethod("GET");
+            conn.connect();
+
+            int responsecode = conn.getResponseCode();
+            if (responsecode != 200) {
+                throw new RuntimeException("HttpResponseCode: " + responsecode);
+            } else {
+                InputStream in = conn.getInputStream();
+                Scanner scanner = new Scanner(in);
+                scanner.useDelimiter("\\A");
+                String data = scanner.hasNext() ? scanner.next() : "";
+                return data;
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+            return null;
+        }
     }
 
     /**
